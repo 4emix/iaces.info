@@ -1,0 +1,43 @@
+<h2>Admin Panel</h2>
+
+<h3>Add Event</h3>
+<input id="event-title" placeholder="Event Title">
+<button onclick="addEvent()">Add</button>
+
+<h3>Update Button Links</h3>
+<input id="button-link" placeholder="New Button URL">
+<button onclick="updateButton()">Update</button>
+
+<button onclick="logout()">Logout</button>
+
+<script type="module">
+  import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+
+  const db = getFirestore();
+  const auth = getAuth();
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "/login.html"; // Redirect if not logged in
+    }
+  });
+
+  async function addEvent() {
+    const title = document.getElementById("event-title").value;
+    await addDoc(collection(db, "events"), { title });
+    alert("Event Added!");
+  }
+
+  async function updateButton() {
+    const link = document.getElementById("button-link").value;
+    await setDoc(doc(db, "buttons", "mainButton"), { url: link });
+    alert("Button Updated!");
+  }
+
+  function logout() {
+    signOut(auth).then(() => {
+      window.location.href = "/login.html";
+    });
+  }
+</script>
